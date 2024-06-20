@@ -11,7 +11,10 @@
 #include <random>
 #include <set>
 #include <string>
+#include <unordered_map>
+#include <utility>
 #include <vector>
+
 
 #define INT_MAX 2147483647
 #define INT_MIN (-2147483647 - 1)
@@ -20,54 +23,48 @@ typedef long long ll;
 typedef long double ld;
 using namespace std;
 
-ll findmax(const vector<ll>& mvals) {
-    ll sum = 0, ml = 0, mr = mvals.size() - 1;
-    while (ml < mr) {
-        if (mvals[ml] < 0) {
-            ml++;
-        } else if (mvals[mr] < 0) {
-            mr--;
-        } else {
-            sum += mvals[ml++] + mvals[mr--];
-        }
-    }
-    if (ml == mr && mvals[ml] > 0) sum += mvals[ml];
-    return sum;
-}
-
 void solve() {
-    int n, m;
-    cin >> n;
-    vector<ll> nvals(n);
-    for (int i = 0; i < n; i++) {
-        cin >> nvals[i];
+    unordered_map<string, pair<int, int>> table;
+    for (int i = 0; i < 12; i++) {
+        string t1, t2, vs;
+        int g1, g2;
+        cin>>t1>>g1>>vs>>g2>>t2;
+        if (g1 > g2) {
+            table[t1].first += 3;
+            table[t1].second += g1 - g2;
+            table[t2].second += g2 - g1;
+        } else if (g1 < g2) {
+            table[t2].first += 3;
+            table[t2].second += g2 - g1;
+            table[t1].second += g1 - g2;
+        } else {
+            table[t1].first += 1;
+            table[t2].first += 1;
+        }
+        vector<pair<string, pair<int, int>>> records;
+        for (const auto& [team, val]: table) {
+            records.push_back({team, val});
+        }
+        sort(records.begin(), records.end(),
+              [](const pair<string, pair<int, int>>& a, const pair<string, pair<int, int>>& b) {
+                  const auto& t1 = a.second;
+                  const auto& t2 = b.second;
+                  if (t1.first < t2.first) {
+                      return false;
+                  } else if (t2.first < t1.first) {
+                      return true;
+                  } else {
+                      return t1.second > t2.second;
+                  }
+              });
+        
+        cout << records[0].first << " " << records[1].first;
     }
-    cin >> m;
-    vector<ll> mvals(m);
-    for (int i = 0; i < m; i++) {
-        cin >> mvals[i];
-    }
-    
-    ll sum = findmax(mvals);
-    ll ans = sum;
-    
-    ll cur = sum;
-    for (int i = 0; i < n; i++) {
-        cur = max(cur + nvals[i], nvals[i]);
-        ans = max(ans, cur);
-    }
-    
-    nvals.push_back(sum);
-    cur = 0;
-    for (int i = 0; i < n; i++) {
-        cur = max(cur + nvals[i], nvals[i]);
-        ans = max(ans, cur);
-    }
-    cout << ans << endl;
 }
 
 int main() {
+	// your code goes here
     int t;
-    cin >> t;
-    while(t--) solve();
+    cin>>t;
+    while(t--)solve();
 }

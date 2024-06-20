@@ -26,6 +26,25 @@ void printVector(const std::vector<T> &vec, const std::string &delimiter = ", ")
 
 void solve()
 {
+    ll v;
+    cin>>v;
+    bool res = (v % 10) < 9;
+    v /= 10;
+
+    while (v > 10 && res) {
+      res = (v % 10) > 0 && (v % 10) < 10;
+      v /= 10;
+    }
+
+    cout << res << endl;
+
+    res &= v == 1;
+
+    if (res) {
+      cout << "Yes" << ENDL;
+    } else {
+      cout << "No" << ENDL;
+    }
 }
 
 int main()
